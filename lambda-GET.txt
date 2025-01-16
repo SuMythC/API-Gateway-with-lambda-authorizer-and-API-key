@@ -1,0 +1,42 @@
+import json
+import boto3
+from botocore.exceptions import ClientError
+from decimal import Decimal
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Students')
+
+# Helper function to convert Decimal to native types
+def decimal_to_native(obj):
+    if isinstance(obj, Decimal):
+        if obj % 1 == 0:
+            return int(obj)  # Convert to int if the decimal has no fractional part
+        else:
+            return float(obj)  # Otherwise, convert to float
+    raise TypeError(f"Type {obj.__class__.__name__} not serializable")
+
+def lambda_handler(event, context):
+    # Check for GET method
+    if event['httpMethod'] == 'GET':
+        try:
+            response = table.scan()  # Scan the table to get all student data
+            students = response.get('Items', [])
+
+            # Convert all Decimal objects to native types (int or float)
+            students = json.loads(json.dumps(students, default=decimal_to_native))
+
+            return {
+                'statusCode': 200,
+                'body': json.dumps(students)  # Return student data in the response
+            }
+        except ClientError as e:
+            return {
+                'statusCode': 500,
+                'body': json.dumps({'message': 'Error retrieving data', 'error': str(e)})
+            }
+    else:
+        return {
+            'statusCode': 405,
+            'body': json.dumps({'message': 'Method Not Allowed'})
+        }

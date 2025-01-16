@@ -1,0 +1,56 @@
+import json
+import boto3
+from botocore.exceptions import ClientError
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table('Students')
+
+def lambda_handler(event, context):
+    # Determine the HTTP method (POST)
+    if event['httpMethod'] == 'POST':
+        try:
+            # Parse the incoming JSON data
+            data = json.loads(event['body'])
+
+            # Extract data fields
+            student_id = data.get('studentid')
+            name = data.get('name')
+            student_class = data.get('class')
+            age = data.get('age')
+
+            if not all([student_id, name, student_class, age]):
+                return {
+                    'statusCode': 400,
+                    'body': json.dumps({'message': 'Missing required fields'})
+                }
+
+            # Insert the new student record into DynamoDB
+            response = table.put_item(
+                Item={
+                    'studentid': student_id,
+                    'name': name,
+                    'class': student_class,
+                    'age': age
+                }
+            )
+
+            return {
+                'statusCode': 201,
+                'body': json.dumps({'message': 'Student data saved successfully'})
+            }
+        except ClientError as e:
+            return {
+                'statusCode': 500,
+                'body': json.dumps({'message': 'Error saving data', 'error': str(e)})
+            }
+        except json.JSONDecodeError:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Invalid JSON in request body'})
+            }
+    else:
+        return {
+            'statusCode': 405,
+            'body': json.dumps({'message': 'Method Not Allowed'})
+        }

@@ -1,0 +1,35 @@
+import json
+
+def lambda_handler(event, context):
+    # Log the entire event for debugging purposes
+    print("Received event: ", json.dumps(event))
+
+    token = event['authorizationToken']  # This will retrieve the token passed in the authorization header
+    method_arn = event['methodArn']      # The ARN of the method being invoked
+
+    print(f"Authorization Token: {token}")
+    print(f"Method ARN: {method_arn}")
+
+    # Simple token validation logic (customize this as needed)
+    if token == "allow":  # Replace "allow" with your actual valid token check
+        effect = "Allow"
+    else:
+        effect = "Deny"
+
+    # Creating the IAM Policy Document
+    policy_document = create_policy(effect, method_arn)
+    
+    return {
+        'principalId': 'user',  # The identity that is being authorized
+        'policyDocument': policy_document,
+    }
+
+def create_policy(effect, resource):
+    return {
+        'Version': '2012-10-17',
+        'Statement': [{
+            'Action': 'execute-api:Invoke',
+            'Effect': effect,
+            'Resource': "*",
+        }]
+    }
