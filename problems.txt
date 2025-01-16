@@ -1,0 +1,9 @@
+1) Problem: Wrong Request Method Results in 404 Error
+When interacting with APIs, a common issue is submitting requests with an incorrect HTTP method, such as posting a request where a GET method is expected. This leads to a 404 error, indicating that the requested resource was not found.
+
+2) Problem: Not saving data in dynamodb
+To resolve the issue of insufficient permission for your Lambda function, you need to attach the necessary execution role to the function. This will grant your function the required permissions to execute and interact with other AWS resources.
+
+3) Problem: missing required headers
+Include the API key and authorization details in the request, which is essential for proper access and authentication.
+
