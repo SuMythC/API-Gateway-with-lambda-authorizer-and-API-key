@@ -7,7 +7,7 @@
 ![lambda post](https://github.com/user-attachments/assets/d97be0ed-e133-48d8-898b-989977dc8328)
 ![lambda GET](https://github.com/user-attachments/assets/379cc3aa-728c-4572-84a6-328bc14ed544)
 
-<strong>Note: code for each lambda is available in th repository</strong>
+<strong>Note: code for each lambda is available in th repository. Also give lambda DynamoDB access role.</strong>
 
 <strong> Creating an API Gateway that authenticates requests using a Lambda authorizer and manages quotas and rate limiting through API keys </strong>
 ![api](https://github.com/user-attachments/assets/91235107-998c-41b3-9b9f-83b2cefe25b3)
